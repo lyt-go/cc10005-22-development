@@ -2,6 +2,8 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import { request } from '@/api/client'
 
+const MAPPING_ROUTE = '/mapping'
+
 const ENDPOINT = '/api/formatter'
 const columns = [
   "转换器编号",
@@ -75,8 +77,13 @@ export default function FormatterView() {
         method: 'POST',
         body: JSON.stringify({ action }),
       })
+      const payload = await response.json().catch(() => null)
       if (!response.ok) {
         throw new Error('格式转换动作未生效，请稍后重试')
+      }
+      if (payload && payload.ok === false) {
+        setErrorMessage(payload.message ?? '格式转换动作被拒绝')
+        return
       }
       await reload()
     } catch (error) {
@@ -94,6 +101,9 @@ export default function FormatterView() {
         <div className="page-actions">
           <button className="btn primary" type="button" onClick={() => setErrorMessage('转换器登记入口尚未接入审批流')}>
             登记转换器
+          </button>
+          <button className="btn" type="button" onClick={() => window.open(`${MAPPING_ROUTE}`, '_self')}>
+            字段映射与转换预览
           </button>
           <button className="btn" type="button" onClick={() => window.open(`${ENDPOINT}/export`, '_blank')}>
             导出格式转换清单

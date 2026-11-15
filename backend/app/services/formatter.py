@@ -3,6 +3,7 @@ from __future__ import annotations
 
 from typing import Any
 
+from app.services.mapping_preview import mapping_preview_service
 from app.store import store
 
 MODULE = "formatter"
@@ -55,6 +56,12 @@ class FormatterService:
         target = ACTION_RULES[action]
         if target not in STATUS_ORDER:
             return None, f"目标状态「{target}」不在允许的状态序列里"
+        if action == "启用转换器":
+            gate_message = mapping_preview_service.gate_message(
+                str(entry.get("转换器编号") or "")
+            )
+            if gate_message:
+                return None, gate_message
         entry["status"] = target
         entry["pending"] = target != STATUS_ORDER[-1]
         entry["abnormal"] = action in NEGATIVE_ACTIONS

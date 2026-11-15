@@ -28,6 +28,22 @@ class EntryPayload(BaseModel):
     remark: str | None = None
 
 
+class MappingPreviewRequest(BaseModel):
+    """发起映射预览时选择的解析模板、转换器、映射表与样例批次。"""
+
+    parser_no: str = Field(description="解析模板编号，例如 PARS-0002")
+    converter_no: str = Field(description="转换器编号，例如 FORM-0002")
+    mapping_table_id: str = Field(description="字段映射表编号，例如 MAP-0002")
+    batch_id: str = Field(description="样例批次编号，例如 BATCH-NORMAL")
+
+
+class MappingConfirmRequest(BaseModel):
+    """确认映射预览：必须先核对冲突列表，才允许生成转换结果。"""
+
+    ack_conflicts: bool = False
+    remark: str | None = None
+
+
 
 class ConnectorEntry(BaseModel):
     """数据连接器明细结构。"""
